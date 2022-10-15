@@ -47,6 +47,21 @@ export class ReservationsService {
     id: number,
     changeReservationsDto: ChangeReservationsDto,
   ) {
+    const reserve_date = changeReservationsDto.reserve_date;
+    const reserve_time = changeReservationsDto.reserve_time;
+    const hospital_id = changeReservationsDto.hospital_id;
+    const checkAvailability = await this.reservationsRepository.findBy({
+      reserve_date,
+      reserve_time,
+      hospital_id,
+    });
+
+    if (checkAvailability.length !== 0) {
+      return Object.assign({ message: '예약이 불가능한 시간입니다.' });
+    }
+
+    console.log(checkAvailability);
+
     return await this.reservationsRepository.update(
       { id },
       changeReservationsDto,
