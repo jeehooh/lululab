@@ -18,7 +18,10 @@ export class Reservations {
   reservator: string;
 
   @Column()
-  reserve_time: Date;
+  reserve_date: string;
+
+  @Column()
+  reserve_time: string;
 
   @Column()
   phone: string;
