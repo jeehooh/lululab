@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Matches } from 'class-validator';
 
 export class ReservationsDto {
   @IsString()
@@ -11,10 +11,16 @@ export class ReservationsDto {
 
   @IsString()
   @IsNotEmpty()
+  @Matches(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/, {
+    message: '날짜 형식은 2022-01-01 형식이여야 합니다',
+  })
   reserve_date: string;
 
   @IsString()
   @IsNotEmpty()
+  @Matches(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: '시간 형식은 12:00 형식이여야 합니다',
+  })
   reserve_time: string;
 
   @IsString()
@@ -42,9 +48,15 @@ export class ChangeReservationsDto {
   reservator: string;
 
   @IsString()
+  @Matches(/^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/, {
+    message: '날짜 형식은 2022-01-01 형식이여야 합니다',
+  })
   reserve_date: string;
 
   @IsString()
+  @Matches(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/, {
+    message: '시간 형식은 12:00 형식이여야 합니다',
+  })
   reserve_time: string;
 
   @IsString()
