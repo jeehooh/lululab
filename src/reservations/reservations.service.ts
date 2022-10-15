@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ChangeReservationsDto, ReservationsDto } from './dto/reservationsDto';
@@ -57,10 +57,8 @@ export class ReservationsService {
     });
 
     if (checkAvailability.length !== 0) {
-      return Object.assign({ message: '예약이 불가능한 시간입니다.' });
+      throw new HttpException('예약이 불가능한 시간입니다.', 400);
     }
-
-    console.log(checkAvailability);
 
     return await this.reservationsRepository.update(
       { id },

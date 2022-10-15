@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -44,7 +45,11 @@ export class ReservationsController {
         reserve_time,
       );
 
-    return Object.assign(unavailableListByHospital);
+    if (unavailableListByHospital.length === 0) {
+      return Object.assign({ message: '예약 가능' });
+    } else {
+      return Object.assign(unavailableListByHospital);
+    }
   }
 
   @Post()
@@ -74,7 +79,7 @@ export class ReservationsController {
     );
 
     if (reservationList.length === 0) {
-      return Object.assign({ message: '일치하는 예약이 없습니다.' });
+      throw new NotFoundException({ message: '일치하는 예약이 없습니다.' });
     }
 
     return reservationList;
