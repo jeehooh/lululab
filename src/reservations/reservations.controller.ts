@@ -9,7 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ChangeReservationsDto, ReservationsDto } from './dto/reservationsDto';
+import { ReservationsDto } from './dto/reservationsDto';
 import { ReservationsService } from './reservations.service';
 
 @Controller('reservations')
@@ -55,13 +55,17 @@ export class ReservationsController {
   @Post()
   @UsePipes(ValidationPipe)
   async makeReservation(@Body() reservationsDto: ReservationsDto) {
-    const check = await this.reservationsService.reservationDuplicateCheck(
-      reservationsDto,
-    );
+    const phone: string = reservationsDto.phone;
+    await this.reservationsService.noShowCheck(phone);
 
-    if (check) {
+    const reservationCheck =
+      await this.reservationsService.reservationDuplicateCheck(reservationsDto);
+
+    if (reservationCheck) {
       return Object.assign({ message: '존재하는 예약입니다.' });
     }
+
+    await this.reservationsService.checkAvailability(reservationsDto);
 
     await this.reservationsService.makeReservation(reservationsDto);
     return Object.assign({ message: '예약 성공!' });
@@ -89,11 +93,11 @@ export class ReservationsController {
   @UsePipes(ValidationPipe)
   async updateReservation(
     @Param('id') id: number,
-    @Body() changeReservationsDto: ChangeReservationsDto,
+    @Body() reservationsDto: ReservationsDto,
   ) {
     const updateReservation = await this.reservationsService.updateReservation(
       id,
-      changeReservationsDto,
+      reservationsDto,
     );
 
     if (updateReservation.affected === 1) {
@@ -101,5 +105,18 @@ export class ReservationsController {
     }
 
     return updateReservation;
+  }
+
+  @Patch()
+  @UsePipes(ValidationPipe)
+  async updateNoShow(@Body('id') id: number, @Body('no_show') no_show: number) {
+    const updateNoShow = await this.reservationsService.updateNoShow(
+      id,
+      no_show,
+    );
+
+    if (updateNoShow.affected === 1) {
+      return Object.assign({ message: '노쇼 정보 수정 완료.' });
+    }
   }
 }
