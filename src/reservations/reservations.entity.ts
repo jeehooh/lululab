@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -34,6 +35,9 @@ export class Reservations {
 
   @Column()
   hospital_id: number;
+
+  @Column({ default: 0 })
+  no_show: number;
 
   @CreateDateColumn()
   created_at: Date;
